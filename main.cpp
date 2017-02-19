@@ -4,12 +4,14 @@
  */
 
 
+#include <Application.h>
 #include <File.h>
 #include <private/shared/Json.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "Application.cpp"
 
 int main(int argc, char** argv)
 {
@@ -19,44 +21,9 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	BFile file(argv[1], B_READ_ONLY);
-	off_t size;
+	Application app(argv[1]);
 
-	if (file.GetSize(&size) != B_OK)
-	{
-		fprintf(stderr, "%s is not a file\n", argv[1]);
-		return 2;
-	}
-
-	char* data = (char*)malloc(size);
-
-	file.Read(data, size);
-
-	BMessage parsed;
-	if (BPrivate::BJson::Parse(parsed, data) != B_OK)
-	{
-		fprintf(stderr, "%s is not a JSON file\n", argv[1]);
-		return 2;
-	}
-
-	free(data);
-
-	BMessage results;
-	parsed.FindMessage("results", &results);
-
-	int count;
-	count = parsed.FindDouble("count");
-	for (int i = 0; i < count; i++)
-	{
-		BMessage task;
-		BString tmp;
-		tmp << i;
-		results.FindMessage(tmp, 0, &task);
-
-		tmp = task.FindString("name");
-
-		printf("%s\n", tmp.String());
-	}
+	app.Run();
 
 	return 0;
 }
