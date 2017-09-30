@@ -26,7 +26,7 @@ Application::Application(const char* filename)
 	file.Read(data, size);
 
 	BMessage parsed;
-	if (BPrivate::BJson::Parse(parsed, data) != B_OK)
+	if (BPrivate::BJson::Parse(data, parsed) != B_OK)
 	{
 		fprintf(stderr, "%s is not a JSON file\n", filename);
 		return;
@@ -36,7 +36,7 @@ Application::Application(const char* filename)
 
 	parsed.FindMessage("results", &fTaskData);
 
-	fTaskCount = parsed.FindDouble("count");
+	fTaskCount = (int)parsed.FindDouble("count");
 }
 
 
